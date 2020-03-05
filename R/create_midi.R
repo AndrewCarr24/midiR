@@ -148,9 +148,10 @@ hex_add <- function(nums){
 
 # Take cumulative sums between zeros
 cumsum_between_zeros <- function(lst){
-  dplyr::tibble(rest = lst) %>% mutate(marker = ifelse(rest == "00", 1, 0)) %>%
-    mutate(marker2 = ifelse(marker == 1, 0, cumsum(marker))) %>% group_by(marker2) %>%
-    mutate(rest_fin = hex_add(rest)) %>%
+  dplyr::tibble(rest = lst) %>% dplyr::mutate(marker = ifelse(rest == "00", 1, 0)) %>%
+    dplyr::mutate(marker2 = ifelse(marker == 1, 0, cumsum(marker))) %>%
+    dplyr::group_by(marker2) %>%
+    dplyr::mutate(rest_fin = hex_add(rest)) %>%
     .[['rest_fin']]}
 
 
