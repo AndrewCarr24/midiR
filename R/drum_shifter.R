@@ -41,7 +41,7 @@ drum_shifter <- function(seq_arg = NULL, shift = NULL, prob = 1, position = "all
       prob_mappings = prob_mappings[!pos_mappings %in% which(seq == "rest")]
       pos_mappings = pos_mappings[!pos_mappings %in% which(seq == "rest")]
 
-      seq[pos_mappings] <- pmap(list(pos_mappings, prob_mappings), function(x, y){
+      seq[pos_mappings] <- purrr::pmap(list(pos_mappings, prob_mappings), function(x, y){
 
         sample(c(shift, seq[x]), 1, prob = c(y, 1-y))
 
