@@ -1,5 +1,5 @@
 ---
-title: "introduction_to_midiR"
+title: "Introduction to midiR"
 author: "Andrew Carr"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -7,6 +7,7 @@ vignette: >
   %\VignetteIndexEntry{introduction_to_midiR}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::knitr}
 ---
 
 ```{r, include = FALSE}
@@ -19,6 +20,7 @@ knitr::opts_chunk$set(
 ```{r setup, echo = FALSE, warning = 'hide', message=FALSE}
 library(midiR)
 library(dplyr)
+library(lattice)
 ```
 
 The midiR package was created to allow R users to make music in R.  Specifically, this package provides a set of functions that aid in the creation of MIDI files.  MIDI files are musical compositions that can be read by a computer. Digital synthesizers can read MIDI files like sheet music and produce music from them.       
