@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1583438208770.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "2EA5ED76",
+    "lastKnownWriteTime" : 1583438270,
+    "last_content_update" : 1583438270859,
+    "path" : "~/MIDI Package v1/midiR/R/drum_machine.R",
+    "project_path" : "R/drum_machine.R",
+    "properties" : {
+        "cursorPosition" : "41,35",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

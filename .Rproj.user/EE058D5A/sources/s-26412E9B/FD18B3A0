@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1583439078620.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "FD18B3A0",
+    "lastKnownWriteTime" : 1583439111,
+    "last_content_update" : 1583439111370,
+    "path" : "~/MIDI Package v1/midiR/R/random_muter.R",
+    "project_path" : "R/random_muter.R",
+    "properties" : {
+        "cursorPosition" : "8,35",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 6,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
