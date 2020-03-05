@@ -418,3 +418,4 @@ create_on_off_notes <- function(notes, note_length){
 
   return(list(note_vec, length_vec, rest_vec))
 }
+
