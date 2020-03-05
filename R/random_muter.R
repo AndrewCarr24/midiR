@@ -30,7 +30,7 @@ random_muter <- function(seq_arg = NULL, prob = 1, position = "all", track_apply
       pos_mappings = mappings[[1]]
       prob_mappings = mappings[[2]]
 
-      seq[pos_mappings] <- pmap(list(pos_mappings, prob_mappings), function(x, y){
+      seq[pos_mappings] <- purrr::pmap(list(pos_mappings, prob_mappings), function(x, y){
         sample(c('rest', seq[x]), 1, prob = c(y, 1-y))
       }) %>% unlist
 
