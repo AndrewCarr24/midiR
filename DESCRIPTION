@@ -20,3 +20,4 @@ Imports:
 Suggests: 
     knitr,
     rmarkdown
+RoxygenNote: 6.1.1.9000
