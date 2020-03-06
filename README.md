@@ -1,20 +1,3 @@
----
-output: github_document
----
-
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
-```
-# midiR
-
-<!-- badges: start -->
-<!-- badges: end -->
-
 The midiR package allows you to create MIDI files in R.  The package is particularly useful for creating drum loops that can be played by a digital audio workstation (for example, Garage Band or Audacity).  
 
 To download this package install the devtools package and follow these instructions.
