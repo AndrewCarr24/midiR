@@ -1,3 +1,5 @@
+# midiR
+
 The midiR package allows you to create MIDI files in R.  The package is particularly useful for creating drum loops that can be played by a digital audio workstation (for example, Garage Band or Audacity).  
 
 To download this package install the devtools package and follow these instructions.
