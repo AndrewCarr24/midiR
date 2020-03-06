@@ -1,8 +1,5 @@
 #' Randomly modify MIDI sequence
 #'
-#'
-#'
-#'
 #' @description Takes sequence produced by drum_machine function and applies modification to this sequence.
 #' @param seq_arg The sequence to be modified.  This should be the output of the drum_machine function.
 #' @param modifier ("double", "flam", "roll", "cc") The modification to apply.
@@ -13,8 +10,8 @@
 #' @param cc_map If using cc modifier, this specifies the mapping of control changes.
 #' @return A modified MIDI sequence to be entered into the create_midi function.
 #' @examples
-#'
 #'# Applies double modification to first track (hh, or hi-hat) of drum sequence with .5 probability.
+#'
 #' drum_machine(hh = 1:16, kick = seq(1, 16, by = 4), snare = c(5, 13)) %>%
 #' random_modify(., modifier = "double", prob = .5, track_apply = 1)
 #'

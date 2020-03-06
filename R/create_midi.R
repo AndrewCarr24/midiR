@@ -1,4 +1,15 @@
-# Create MIDI Function - can handle lists of sequences, treating each item in list as separate track #
+#' Create MIDI sequences.
+#'
+#' @description Converts musical sequences into hexadecimal MIDI sequences.
+#' @param notes_arg The sequence to be turned into hexadecimal MIDI.  This is the output of the drum_machine function or a modified drum sequence.
+#' @return A hexadecimal MIDI sequence to be entered into the write_midi function.
+#' @examples
+#'# Shifts notes in the first track (hh, or hi-hat) of drum sequence to "G#1" with .5 probability.
+#'
+#' drum_machine(hh = 1:16, kick = seq(1, 16, by = 4), snare = c(5, 13)) %>%
+#' create_midi()
+#'
+#'
 create_midi <- function(notes_arg, tempo = 120){
 
   # Create midi from each track (each item in list)

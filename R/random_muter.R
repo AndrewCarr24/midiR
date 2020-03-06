@@ -1,3 +1,18 @@
+#' Randomly mute MIDI sequence
+#'
+#' @description Takes sequence produced by drum_machine function and applies mutes to this sequence.
+#' @param seq_arg The sequence to be modified.  This should be the output of the drum_machine function.
+#' @param prob (default = 1) The probability a note in the sequence will be muted.
+#' @param position (default = "all") The position of items in the sequence to be muted.
+#' @param track_apply An integer or vector of integers indicating which tracks (hh, kick, snare) to apply the mute to.
+#' @return A modified MIDI sequence to be entered into the create_midi function.
+#' @examples
+#'# Applies mutes to first track (hh, or hi-hat) of drum sequence with .5 probability.
+#'
+#' drum_machine(hh = 1:16, kick = seq(1, 16, by = 4), snare = c(5, 13)) %>%
+#' random_muter(., prob = .5, track_apply = 1)
+#'
+#'
 random_muter <- function(seq_arg = NULL, prob = 1, position = "all", track_apply = NULL){
 
   if(is.null(seq_arg) | seq_arg[1] == "rand_seq"){

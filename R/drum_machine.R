@@ -1,8 +1,5 @@
 #' Create drum sequence.
 #'
-#'
-#'
-#'
 #' @description Creates drum sequence as named  list.  Emulates a 16-step drum sequencer.
 #' @param hh (optional) Takes numbers from 1 to 16, which represent the hi-hat's positions in a 16-step sequence.
 #' @param kick (optional) Takes numbers from 1 to 16, which represent the kick's positions in a 16-step sequence.
