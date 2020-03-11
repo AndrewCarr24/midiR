@@ -17,7 +17,7 @@ seq_cat <- function(seq1, seq2){
 
   # Make sure object names are the same
   if(!identical(names(seq1), names(seq2)))
-    stop("The arguments of this function must be lists that have elements with the same names.")
+    stop("The arguments of this function must be lists that have elements with the same names in the same order.")
 
   # Elementwise concatenation of arguments.  Output of each concatenated element takes attributes of first argument.
   purrr::map2(seq1, seq2, function(x, y){
