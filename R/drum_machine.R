@@ -10,7 +10,7 @@
 #' snare = c(5, 13))
 #'
 #'
-drum_machine <- function(..., note_length = NULL, rep = 1){
+drum_machine <- function(..., note_length = NULL, instrument = "Synth Drum", rep = 1){
 
   args <- list(...)
 
@@ -19,7 +19,7 @@ drum_machine <- function(..., note_length = NULL, rep = 1){
   }
 
 
-  seqs <- purrr::map2(args, names(args), function(x, y){
+  seqs <- purrr::pmap(list(args, names(args), instrument), function(x, y, z){
 
     seq <- rep("rest", 16)
 
@@ -37,7 +37,7 @@ drum_machine <- function(..., note_length = NULL, rep = 1){
 
     class(seq) = "seq"
     attr(seq, "note_length") = note_length
-    attr(seq, "meta") = c("00 C0 76")
+    attr(seq, "meta") = paste("00 C0", instrument_to_hex(z))
 
 
     seq
@@ -48,5 +48,13 @@ drum_machine <- function(..., note_length = NULL, rep = 1){
 
 }
 
+# Helper function - turn instrument name to corresponding hex code
+instrument_to_hex <- function(instrument, data = instrument_df){
 
+  if(instrument %in% instrument_df$instrument)
+    return(instrument_df$hex[instrument_df$instrument == instrument])
+  else
+    stop("The instrument you entered could not be found.")
+
+}
 
