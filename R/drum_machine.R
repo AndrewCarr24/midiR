@@ -31,6 +31,10 @@ drum_machine <- function(..., note_length = NULL, instrument = "Synth Drum", rep
       seq[x] = "D1"
     }else if(y == "htom"){
       seq[x] = "A1"
+    }else if(y %in% paste0(c("C", "C#", "D", "D#", "E", "F",
+                             "F#", "G", "G#", "A", "Bb", "B"),
+                           rep(seq(-2,8), each = 12))){
+      seq[x] = y
     }
 
     seq <- rep(seq, rep)
