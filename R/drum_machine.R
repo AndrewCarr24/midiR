@@ -18,8 +18,13 @@ drum_machine <- function(..., note_length = NULL, instrument = "Synth Drum", rep
     stop("This is a 16-step drum machine.  Only enter integers between 1 and 16.")
   }
 
+  # Assigning each distinct instrument to its own channel
+  channel <- rep("C0", length(args))
+  if(length(instrument) > 1){
+    channel <- paste0("C", as.character(factor(instrument) %>% as.numeric - 1))
+  }
 
-  seqs <- purrr::pmap(list(args, names(args), instrument), function(x, y, z){
+  seqs <- purrr::pmap(list(args, names(args), instrument, channel), function(x, y, z, k){
 
     seq <- rep("rest", 16)
 
@@ -41,7 +46,7 @@ drum_machine <- function(..., note_length = NULL, instrument = "Synth Drum", rep
 
     class(seq) = "seq"
     attr(seq, "note_length") = note_length
-    attr(seq, "meta") = paste("00 C0", instrument_to_hex(z))
+    attr(seq, "meta") = paste("00", k, instrument_to_hex(z))
 
 
     seq
