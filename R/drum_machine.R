@@ -57,13 +57,4 @@ drum_machine <- function(..., note_length = NULL, instrument = "Synth Drum", rep
 
 }
 
-# Helper function - turn instrument name to corresponding hex code
-instrument_to_hex <- function(instrument, data = instrument_df){
-
-  if(instrument %in% instrument_df$instrument)
-    return(instrument_df$hex[instrument_df$instrument == instrument])
-  else
-    stop("The instrument you entered could not be found.")
-
-}
 
