@@ -10,6 +10,8 @@
 #' create_midi()
 #'
 #'
+#'
+
 create_midi <- function(notes_arg, tempo = 120){
 
   # Create midi from each track (each item in list)
@@ -214,12 +216,15 @@ create_rest_vec <- function(length_vec, note_vec){
 # Put note, length, and rest vecs together to make midi track
 midi_track_maker <- function(length_vec, note_vec, rest_vec, instrument = NULL, cc = NULL){
 
-  hex_track <- stringr::str_split(paste(c(purrr::pmap(list(length_vec, note_vec, rest_vec), function(x, y, z){
+  hex_track <- stringr::str_split(paste(c(purrr::pmap(list(length_vec, note_vec, rest_vec, seq_along(note_vec)), function(x, y, z, k){
 
     # Dealing with chords
     if(length(y) > 1){
       x <- c(x, rep(0, length(y)-1))
     }
+
+    note_on <- y
+    note_off <- y
 
     if(any(z == "flam1")){
 
@@ -235,6 +240,23 @@ midi_track_maker <- function(length_vec, note_vec, rest_vec, instrument = NULL, 
       z <- "2c"
       x <- "00"
 
+    }else if(any(z == "glide1")){
+
+      first_on_off <- c("90", "7F")
+      second_on_off <- c("90", "7F")
+      z <- z[1]
+      note_on = note_vec[k]
+      note_off = note_vec[k + 1]
+
+    }else if(any(z == "glide2")){
+
+      first_on_off <- c("80", "00")
+      second_on_off <- c("80", "00")
+      z <- (z[1] %>% as.hexmode() %>% as.numeric() + 4) %>% as.hexmode() %>% as.character()
+      note_on = note_vec[k -1]
+      note_off = note_vec[k]
+      x <- (x[1] %>% as.hexmode() %>% as.numeric() - 4) %>% as.hexmode() %>% as.character()
+
     }else{
 
       first_on_off <- c("90", "7F")
@@ -243,7 +265,8 @@ midi_track_maker <- function(length_vec, note_vec, rest_vec, instrument = NULL, 
     }
 
     # Creating body of midi track - series of Note On and Note Off commands followed by end of track (FF 2F 00)
-    c(paste(z, first_on_off[1], y, first_on_off[2]), paste(x, second_on_off[1], y, second_on_off[2]))
+    c(paste(z, first_on_off[1], note_on, first_on_off[2]), paste(x, second_on_off[1], note_off, second_on_off[2]))
+
   }) %>% unlist, "00 FF 2F 00")), " ") %>% unlist
 
   # Apply CC information (if there is any)
@@ -326,6 +349,12 @@ give_header_and_tempo <- function(track_info){
 
 # Modify the note vector to account for double/flam notes
 note_vec_modify <- function(vec_arg, notes_arg){
+
+  # Accounting for glides
+  # glide_notes1 <- vec_arg[grep("g", notes_arg)]
+  # glide_notes2 <- vec_arg[grep("g", notes_arg)+1]
+  # vec_arg[grep("g", notes_arg)] <- glide_notes2
+  # vec_arg[grep("g", notes_arg)+1] <- glide_notes1
 
   note_vec_mod <- as.list(rep(1, length(vec_arg) + length(grep("d|f", notes_arg)) + 2*length(grep("l", notes_arg))))
   idx <- special_notes_idx(notes_arg)
@@ -422,12 +451,26 @@ create_on_off_notes <- function(notes, note_length){
     }
   })
 
-  # Adjusting rest_vec to account for flams
-  rest_vec[(grep("f", notes[notes != "rest"])+1:length(grep("f", notes[notes != "rest"]))) - 1] <-
-    purrr::map(rest_vec[(grep("f", notes[notes != "rest"])+1:length(grep("f", notes[notes != "rest"]))) - 1], ~c(.x,"flam1"))
-  rest_vec[(grep("f", notes[notes != "rest"])+1:length(grep("f", notes[notes != "rest"])))] <-
-    purrr::map(rest_vec[(grep("f", notes[notes != "rest"])+1:length(grep("f", notes[notes != "rest"])))], ~c(.x,"flam2"))
+  # Adjusting rest_vec to account for flams and glides
+  rest_vec <- rest_vec_modify(rest_vec, notes = notes)
 
   return(list(note_vec, length_vec, rest_vec))
 }
+
+# Adjusting rest_vec to account for flams and glides
+rest_vec_modify <- function(rest_vec_arg, notes = NULL){
+
+  rest_vec_arg[(grep("f", notes[notes != "rest"])+1:length(grep("f", notes[notes != "rest"]))) - 1] <-
+    purrr::map(rest_vec_arg[(grep("f", notes[notes != "rest"])+1:length(grep("f", notes[notes != "rest"]))) - 1], ~c(.x,"flam1"))
+  rest_vec_arg[(grep("f", notes[notes != "rest"])+1:length(grep("f", notes[notes != "rest"])))] <-
+    purrr::map(rest_vec_arg[(grep("f", notes[notes != "rest"])+1:length(grep("f", notes[notes != "rest"])))], ~c(.x,"flam2"))
+
+  rest_vec_arg[(grep("g", notes[notes != "rest"]))] <-
+    purrr::map(rest_vec_arg[(grep("g", notes[notes != "rest"]))], ~c(.x,"glide1"))
+  rest_vec_arg[(grep("g", notes[notes != "rest"])+1)] <-
+    purrr::map(rest_vec_arg[(grep("g", notes[notes != "rest"])+1)], ~c(.x,"glide2"))
+
+  return(rest_vec_arg)
+}
+
 
