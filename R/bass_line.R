@@ -30,6 +30,3 @@ bass_line <- function(..., note_length = NULL, instrument = 1, rep = 1){
 
 }
 
-
-bass_line(G1 = 8, D2  = 8, C2 = 8, E1 = 8, instrument = 8, rep = 5) %>%
-  create_midi() %>% write_midi(., "midi_test.mid")
