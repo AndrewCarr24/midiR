@@ -53,9 +53,9 @@ random_muter <- function(seq_arg = NULL, prob = 1, position = "all", track_apply
     }
   })
 
-  if(length(lst) == 1){
-    return(lst[[1]])}else{
+  #if(length(lst) == 1){
+  #  return(lst[[1]])}else{
       return(lst)
-    }
+  #  }
 
 }
