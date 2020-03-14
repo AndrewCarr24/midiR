@@ -240,7 +240,7 @@ midi_track_maker <- function(length_vec, note_vec, rest_vec, instrument = NULL, 
       z <- "2c"
       x <- "00"
 
-    }else if(any(z == "glide1")){
+    }else if(any(z == "glide_start")){
 
       first_on_off <- c("90", "7F")
       second_on_off <- c("90", "7F")
@@ -248,7 +248,16 @@ midi_track_maker <- function(length_vec, note_vec, rest_vec, instrument = NULL, 
       note_on = note_vec[k]
       note_off = note_vec[k + 1]
 
-    }else if(any(z == "glide2")){
+    }else if(any(z == "glide_middle")){
+
+      first_on_off <- c("80", "00")
+      second_on_off <- c("90", "7F")
+      z <-  (z[1] %>% as.hexmode() %>% as.numeric() + 4) %>% as.hexmode() %>% as.character()
+      note_on = note_vec[k-1]
+      note_off = note_vec[k+1]
+      x <- (x[1] %>% as.hexmode() %>% as.numeric() - 4) %>% as.hexmode() %>% as.character()
+
+    }else if(any(z == "glide_end")){
 
       first_on_off <- c("80", "00")
       second_on_off <- c("80", "00")
@@ -466,9 +475,17 @@ rest_vec_modify <- function(rest_vec_arg, notes = NULL){
     purrr::map(rest_vec_arg[(grep("f", notes[notes != "rest"])+1:length(grep("f", notes[notes != "rest"])))], ~c(.x,"flam2"))
 
   rest_vec_arg[(grep("g", notes[notes != "rest"]))] <-
-    purrr::map(rest_vec_arg[(grep("g", notes[notes != "rest"]))], ~c(.x,"glide1"))
+    purrr::map(rest_vec_arg[(grep("g", notes[notes != "rest"]))], ~c(.x,"glide_start"))
   rest_vec_arg[(grep("g", notes[notes != "rest"])+1)] <-
-    purrr::map(rest_vec_arg[(grep("g", notes[notes != "rest"])+1)], ~c(.x,"glide2"))
+    purrr::map(rest_vec_arg[(grep("g", notes[notes != "rest"])+1)], ~c(.x,"glide_end"))
+
+  rest_vec_arg <- purrr::map(rest_vec_arg, function(x){
+    if("glide_start" %in% x & "glide_end" %in% x){
+      return(c(x[1:(length(x)-2)], "glide_middle"))
+    }else{
+      return(x)
+    }
+  })
 
   return(rest_vec_arg)
 }
