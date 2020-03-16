@@ -19,6 +19,8 @@
 random_modify <- function(seq_arg = NULL, modifier = NULL, prob = 1, position = "all", track_apply = NULL,
                           cc_parm = NULL, cc_map = NULL){
 
+  instruments <- purrr::map(seq_arg, ~attr(.x, "meta"))
+
   mod_arg <- switch(modifier,
                     double = "d",
                     flam = "f",
@@ -43,7 +45,7 @@ random_modify <- function(seq_arg = NULL, modifier = NULL, prob = 1, position = 
     track_arg[track_apply] = TRUE
   }
 
-  lst <- purrr::map2(seq_arg, track_arg, function(seq, track){
+  lst <- purrr::pmap(list(seq_arg, track_arg, instruments), function(seq, track, instr){
 
     #
     if(!track){
@@ -70,19 +72,19 @@ random_modify <- function(seq_arg = NULL, modifier = NULL, prob = 1, position = 
         }) %>% unlist
 
         attr(seq, "class") <- "seq"
-        attr(seq, "meta") <- "00 C0 76"
+        attr(seq, "meta") <- instr
 
         return(seq)
 
       }else{
 
         seq[pos_mappings] <- purrr::pmap(list(pos_mappings, prob_mappings), function(x, y){
-          c(paste0("CC-", y, "-", cc_parm), seq[x])})
+          c(paste0("CC-", y %>% as.hexmode() %>% as.character(), "-", cc_parm), seq[x])})
 
         seq <- seq %>% unlist
 
         attr(seq,  "class") <- "seq"
-        attr(seq, "meta") <- "00 C0 76"
+        attr(seq, "meta") <- instr
 
         return(seq)
 
