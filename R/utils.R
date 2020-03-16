@@ -29,7 +29,9 @@ template_and_builder_aux <- function(seq = seq, position = position, prob = prob
   prob_nums =  purrr::map(seq(1, length(probs), 2), ~probs[c(.x, .x+1)])}
 
   if(!is.null(mapper)){
-    stopifnot(position[length(position)] == "template" & mapper[length(mapper)] == "cc")
+    if(position[length(position)] != "template" | mapper[length(mapper)] != "cc"){
+      stop("The position and cc_map arguments of random_modify should be given the appropriate functions, template and cc_mapper.")
+    }
     cc_mappings <- rep(mapper[1:(length(mapper)-1)], bar)
   }
 
