@@ -10,6 +10,8 @@ create_midi2 <- function(seq_arg, note_length){
 
     purrr::map2(seq, seq_along(seq), function(x, y){
 
+      if(stringr::str_extract(x[1], "^.{2}") != "CC"){
+
       rest_hex <- first_rests(x, note_length = note_length)
 
       x <- x[x != "rest"]
@@ -67,11 +69,23 @@ create_midi2 <- function(seq_arg, note_length){
       return(c(rest_hex, event1_hex, note1_hex, velocity1_hex,
                note_length_hex, event2_hex, note2_hex, velocity2_hex))
 
+      }else{
+
+        return(c("00", "B0", stringr::str_extract(x, ".{2}$"), stringr::str_extract(x, "(?<=-).{2}(?=-)") ))
+
+      }
+
       }) %>% unlist
 
     })
 
+
+
+
+
+
   hex_tracks <- purrr::map2(hex_tracks, instruments, ~c(.y, .x))
+
 
   tracks_fin <- purrr::map(hex_tracks, function(track){
 
