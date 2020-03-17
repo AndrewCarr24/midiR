@@ -38,7 +38,7 @@ random_modify <- function(seq_arg = NULL, modifier = NULL, prob = 1, position = 
     seq_arg <- list(seq_arg)
   }
 
-  # Selecting tracks(s) to apply doubles to
+  # Selecting tracks(s) to apply modification to
   track_arg = rep(TRUE, length(seq_arg))
   if(!is.null(track_apply)){
     track_arg = rep(FALSE, length(seq_arg))
