@@ -19,6 +19,16 @@ cc_mapper <- function(...){
 
 }
 
+## CC Function
+v_mapper <- function(...){
+
+  return(list(..., "v"))
+
+}
+
+
+template_and_builder_aux(seq = seq, position = position, mapper = v_map)
+
 # Turns template and builder lists into position and probability mappings (for use in randomizer functions)
 template_and_builder_aux <- function(seq = seq, position = position, prob = prob, mapper = NULL){
 
@@ -29,10 +39,11 @@ template_and_builder_aux <- function(seq = seq, position = position, prob = prob
   prob_nums =  purrr::map(seq(1, length(probs), 2), ~probs[c(.x, .x+1)])}
 
   if(!is.null(mapper)){
-    if(position[length(position)] != "template" | mapper[length(mapper)] != "cc"){
+    if(position[length(position)] != "template" | (mapper[length(mapper)] != "cc" & mapper[length(mapper)] != "v")){
       stop("The position and cc_map arguments of random_modify should be given the appropriate functions, template and cc_mapper.")
+    }else{
+    other_mappings <- rep(mapper[1:(length(mapper)-1)], length(seq)/bar)
     }
-    cc_mappings <- rep(mapper[1:(length(mapper)-1)], length(seq)/bar)
   }
 
   if(position[length(position)] == "template"){
@@ -47,11 +58,12 @@ template_and_builder_aux <- function(seq = seq, position = position, prob = prob
     prob_mappings = rep(prob, length(pos_mappings %>% unlist))
   }
 
-  if(exists("cc_mappings")){
-    return(list(sort(pos_mappings %>% unlist), cc_mappings %>% unlist))
+  if(exists("other_mappings")){
+    return(list(sort(pos_mappings %>% unlist), other_mappings %>% unlist))
   }else{
     return(list(sort(pos_mappings %>% unlist), prob_mappings %>% unlist))
   }
+
 }
 
 # Turn instrument name to corresponding hex code

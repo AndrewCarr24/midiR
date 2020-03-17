@@ -71,7 +71,7 @@ create_midi2 <- function(seq_arg, note_length){
 
       }else{
 
-        return(c("00", "B0", stringr::str_extract(x, ".{1,}$"), stringr::str_extract(x, "(?<=-).{2}(?=-)") ))
+        return(c("00", "B0", stringr::str_extract(x, ".{2}$"), stringr::str_extract(x, "(?<=-).{1,}(?=-)") ))
 
       }
 
