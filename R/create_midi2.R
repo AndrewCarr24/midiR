@@ -81,6 +81,8 @@ create_midi2 <- function(seq_arg, note_length){
 
 
 
+
+
   hex_tracks <- purrr::map2(hex_tracks, instruments, ~c(.y, .x))
 
 
