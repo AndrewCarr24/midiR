@@ -45,7 +45,7 @@ random_modify <- function(seq_arg = NULL, modifier = NULL, prob = 1, position = 
     track_arg[track_apply] = TRUE
   }
 
-  lst <- purrr::pmap(list(seq_arg, track_arg, instruments), function(seq, track, instr){
+    lst <- purrr::pmap(list(seq_arg, track_arg, instruments), function(seq, track, instr){
 
     #
     if(!track){

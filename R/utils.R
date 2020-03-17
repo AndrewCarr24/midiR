@@ -32,7 +32,7 @@ template_and_builder_aux <- function(seq = seq, position = position, prob = prob
     if(position[length(position)] != "template" | mapper[length(mapper)] != "cc"){
       stop("The position and cc_map arguments of random_modify should be given the appropriate functions, template and cc_mapper.")
     }
-    cc_mappings <- rep(mapper[1:(length(mapper)-1)], bar)
+    cc_mappings <- rep(mapper[1:(length(mapper)-1)], length(seq)/bar)
   }
 
   if(position[length(position)] == "template"){
