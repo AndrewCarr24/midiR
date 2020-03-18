@@ -78,3 +78,46 @@ instrument_to_hex <- function(instrument, data = instrument_df){
 
 
 
+vel_helper <- function(x, event){
+
+  if(event == "90"){
+
+    if(!is.na(x)){
+      return(x)
+    }else{
+      return("7f")
+    }
+
+  }else if(event == "80"){
+
+    return("00")
+  }
+
+}
+
+
+attr_chunk <- function(seq, seq_orig, attr_seq){
+
+  attr_seq <- as.list(attr_seq)
+
+  attr_seq <- purrr::map2(seq_orig, attr_seq, function(x, y){
+
+    if(grepl("d", x)){
+
+      return(c(y, NA))
+
+    }else{
+
+      return(y)
+
+    }
+
+
+    }) %>% unlist
+
+  return(attr_seq[cumsum(purrr::map(seq, ~length(.x)) %>% unlist)])
+
+}
+
+purrr::map(seq_arg %>% unname %>% .[[1]], ~grep("d", .x))
+grep("d", NA)

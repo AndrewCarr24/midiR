@@ -1,16 +1,28 @@
+
 create_midi2 <- function(seq_arg, note_length){
 
   instruments <- purrr::map(seq_arg, function(x){
     strsplit(attr(x, "meta"), " ")
   })
 
-  hex_tracks <- purrr::map(seq_arg %>% unname, function(seq){
+  hex_tracks <- purrr::map(seq_arg %>% unname, function(seq_orig){
 
-    seq <- seq_modify(seq)
+    cc_stuff <- attr(seq_orig, "cc")
+    v_stuff <- attr(seq_orig, "v")
+    seq <- seq_modify(seq_orig)
 
-    purrr::map2(seq, seq_along(seq), function(x, y){
+    cc_stuff <- attr_chunk(seq, seq_orig, cc_stuff)
+    v_stuff <- attr_chunk(seq, seq_orig, v_stuff)
 
-      if(stringr::str_extract(x[1], "^.{2}") != "CC"){
+    if(is.null(cc_stuff)){
+      cc_stuff <- NA
+    }
+
+    if(is.null(v_stuff)){
+      v_stuff <- NA
+    }
+
+    purrr::pmap(list(seq, seq_along(seq), cc_stuff, v_stuff), function(x, y, z, a){
 
       rest_hex <- first_rests(x, note_length = note_length)
 
@@ -20,8 +32,9 @@ create_midi2 <- function(seq_arg, note_length){
 
       event1_hex <- "90"
       event2_hex <- "80"
-      velocity1_hex <- "7f"
-      velocity2_hex <- "00"
+
+      velocity1_hex <- vel_helper(a, event1_hex)
+      velocity2_hex <- vel_helper(a, event2_hex)
 
       note_length_hex <- note_length
 
@@ -33,12 +46,12 @@ create_midi2 <- function(seq_arg, note_length){
 
       }else if(grepl("f1", x)){
         event2_hex <- "90"
-        velocity2_hex <- "7f"
+        velocity2_hex <- vel_helper(a, event2_hex)
         note_length_hex <- "04"
 
       }else if(grepl("f2", x)){
         event1_hex <- "80"
-        velocity1_hex <- "00"
+        velocity1_hex <- vel_helper(a, event1_hex)
         rest_hex <- (note_length_hex %>% as.hexmode() %>% as.numeric - 4) %>% as.hexmode() %>% as.character()
         note_length_hex <- "00"
 
@@ -49,9 +62,9 @@ create_midi2 <- function(seq_arg, note_length){
 
       }else if(grepl("g2", x)){
         event1_hex <- "80"
-        velocity1_hex <- "00"
+        velocity1_hex <- vel_helper(a, event1_hex)
         event2_hex <- "90"
-        velocity2_hex <- "7f"
+        velocity2_hex <- vel_helper(a, event2_hex)
         rest_hex <- "04"
         note_length_hex <- (note_length_hex %>% as.hexmode() %>% as.numeric - 4) %>% as.hexmode() %>% as.character()
         note1_hex <- seq[y-1] %>% stringr::str_replace(., "h|t|f1|f2|g1|g2|g3", "") %>% note_to_hex()
@@ -59,27 +72,26 @@ create_midi2 <- function(seq_arg, note_length){
 
       }else if(grepl("g3", x)){
         event1_hex <- "80"
-        velocity1_hex <- "00"
+        velocity1_hex <- vel_helper(a, event1_hex)
         note1_hex <- seq[y-1] %>% stringr::str_replace(., "h|t|f1|f2|g1|g2|g3", "") %>% note_to_hex()
         rest_hex <- "04"
         note_length_hex <- (note_length_hex %>% as.hexmode() %>% as.numeric - 4) %>% as.hexmode() %>% as.character()
       }
 
+      if(is.na(z)){
 
       return(c(rest_hex, event1_hex, note1_hex, velocity1_hex,
                note_length_hex, event2_hex, note2_hex, velocity2_hex))
-
       }else{
 
-        return(c("00", "B0", stringr::str_extract(x, ".{2}$"), stringr::str_extract(x, "(?<=-).{1,}(?=-)") ))
-
+        return(c("00", "B0", stringr::str_extract(z, ".{2}$"), stringr::str_extract(z, "(?<=-).{1,}(?=-)"),
+                 rest_hex, event1_hex, note1_hex, velocity1_hex,
+                 note_length_hex, event2_hex, note2_hex, velocity2_hex))
       }
 
       }) %>% unlist
 
     })
-
-
 
 
 
