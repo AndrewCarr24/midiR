@@ -27,8 +27,6 @@ v_mapper <- function(...){
 }
 
 
-template_and_builder_aux(seq = seq, position = position, mapper = v_map)
-
 # Turns template and builder lists into position and probability mappings (for use in randomizer functions)
 template_and_builder_aux <- function(seq = seq, position = position, prob = prob, mapper = NULL){
 
@@ -119,5 +117,3 @@ attr_chunk <- function(seq, seq_orig, attr_seq){
 
 }
 
-purrr::map(seq_arg %>% unname %>% .[[1]], ~grep("d", .x))
-grep("d", NA)

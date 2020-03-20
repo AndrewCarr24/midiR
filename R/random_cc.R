@@ -1,10 +1,3 @@
-cc_parm = "05"
-cc_map = cc_mapper(30, 70)
-position = template(1, 3, every = 4)
-track_apply = 1
-seq_arg <- drum_machine(hh = 1:16, kick = seq(1, 16, 4), snare = c(5, 13))
-
-
 random_cc <- function(seq_arg = NULL, cc_parm = NULL, cc_map = NULL, position = NULL, track_apply = NULL){
 
   instruments <- purrr::map(seq_arg, ~attr(.x, "meta"))
