@@ -4,7 +4,7 @@
 #' @param hh (optional) Takes numbers from 1 to 16, which represent the hi-hat's positions in a 16-step sequence.
 #' @param kick (optional) Takes numbers from 1 to 16, which represent the kick's positions in a 16-step sequence.
 #' @param snare (optional) Takes numbers from 1 to 16, which represent the snare's positions in a 16-step sequence.
-#' #' @importFrom magrittr `%>%`
+#' @importFrom magrittr `%>%`
 #' @return A named list with notes in positions corresponding to the hits.  This list has 'seq' as its class attribute, which means that it can be fed into the create_midi function to be converted into a hexadecimal MIDI sequence.
 #' @examples
 #' drum_machine(hh = 1:16, kick = seq(1,16, by = 4),
