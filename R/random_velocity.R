@@ -43,12 +43,10 @@ random_velocity <- function(seq_arg = NULL, position = NULL, v_map = NULL, track
 
       return(seq)
 
-      }
+    }
 
   })
 
   return(lst)
 
 }
-
-

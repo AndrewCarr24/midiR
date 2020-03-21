@@ -16,25 +16,25 @@ random_cc <- function(seq_arg = NULL, cc_parm = NULL, cc_map = NULL, position = 
       return(seq)
     }else{
 
-  mappings = template_and_builder_aux(seq = seq, position = position, prob = prob, mapper = cc_map)
-  pos_mappings = mappings[[1]]
-  prob_mappings = mappings[[2]]
-  prob_mappings = prob_mappings[!pos_mappings %in% which(seq == "rest")]
-  pos_mappings = pos_mappings[!pos_mappings %in% which(seq == "rest")]
+      mappings = template_and_builder_aux(seq = seq, position = position, prob = 1, mapper = cc_map)
+      pos_mappings = mappings[[1]]
+      prob_mappings = mappings[[2]]
+      prob_mappings = prob_mappings[!pos_mappings %in% which(seq == "rest")]
+      pos_mappings = pos_mappings[!pos_mappings %in% which(seq == "rest")]
 
 
-  cc_seq <- rep(NA, length(seq))
+      cc_seq <- rep(NA, length(seq))
 
-  cc_seq[pos_mappings] <- purrr::map(prob_mappings, function(y){
-    paste0("CC-", y %>% as.hexmode() %>% as.character(), "-", cc_parm)})
+      cc_seq[pos_mappings] <- purrr::map(prob_mappings, function(y){
+        paste0("CC-", y %>% as.hexmode() %>% as.character(), "-", cc_parm)})
 
-  cc_seq <- cc_seq %>% unlist
+      cc_seq <- cc_seq %>% unlist
 
-  attr(seq,  "class") <- "seq"
-  attr(seq, "meta") <- instr
-  attr(seq, "cc") <- cc_seq
+      attr(seq,  "class") <- "seq"
+      attr(seq, "meta") <- instr
+      attr(seq, "cc") <- cc_seq
 
-  return(seq)
+      return(seq)
 
     }
 
@@ -43,6 +43,3 @@ random_cc <- function(seq_arg = NULL, cc_parm = NULL, cc_map = NULL, position = 
   return(lst)
 
 }
-
-
-

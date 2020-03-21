@@ -36,7 +36,7 @@ random_modify <- function(seq_arg = NULL, modifier = NULL, prob = 1, position = 
     track_arg[track_apply] = TRUE
   }
 
-    lst <- purrr::pmap(list(seq_arg, track_arg, instruments), function(seq, track, instr){
+  lst <- purrr::pmap(list(seq_arg, track_arg, instruments), function(seq, track, instr){
 
     if(!track){
       return(seq)
@@ -54,8 +54,11 @@ random_modify <- function(seq_arg = NULL, modifier = NULL, prob = 1, position = 
 
       # Fix items with two modifiers (remove second modifier)
       seq <- purrr::map(seq, function(x){
-        if(x != "rest" & !"CC" %in% x) gsub("(?<=[a-z]{1})[a-z]{1}", "", x, perl = TRUE)
-        else x
+        if(x != "rest"){
+          gsub("(?<=[a-z]{1})[a-z]{1}", "", x, perl = TRUE) %>%
+            gsub("(?<=g[123])[a-z]{1}", "", ., perl = TRUE) %>%
+            gsub("(?<=[a-z]{1})g[123]", "", ., perl = TRUE)
+        }else{x}
       }) %>% unlist
 
       attr(seq, "class") <- "seq"
@@ -70,3 +73,4 @@ random_modify <- function(seq_arg = NULL, modifier = NULL, prob = 1, position = 
   return(lst)
 
 }
+

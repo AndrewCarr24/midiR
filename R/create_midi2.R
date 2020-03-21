@@ -1,4 +1,3 @@
-
 create_midi2 <- function(seq_arg, note_length){
 
   instruments <- purrr::map(seq_arg, function(x){
@@ -21,6 +20,8 @@ create_midi2 <- function(seq_arg, note_length){
     if(is.null(v_stuff)){
       v_stuff <- NA
     }
+
+
 
     purrr::pmap(list(seq, seq_along(seq), cc_stuff, v_stuff), function(x, y, z, a){
 
@@ -58,7 +59,8 @@ create_midi2 <- function(seq_arg, note_length){
       }else if(grepl("g1", x)){
         event2_hex <- "90"
         velocity2_hex <- "7f"
-        note2_hex <- seq[y+1] %>% stringr::str_replace(., "h|t|f1|f2|g1|g2|g3", "") %>% note_to_hex()
+        note2_hex <- seq[y+1][[1]][length(seq[y+1][[1]])] %>%
+          stringr::str_replace(., "h|t|f1|f2|g1|g2|g3", "") %>% note_to_hex()
 
       }else if(grepl("g2", x)){
         event1_hex <- "80"
@@ -67,31 +69,35 @@ create_midi2 <- function(seq_arg, note_length){
         velocity2_hex <- vel_helper(a, event2_hex)
         rest_hex <- "04"
         note_length_hex <- (note_length_hex %>% as.hexmode() %>% as.numeric - 4) %>% as.hexmode() %>% as.character()
-        note1_hex <- seq[y-1] %>% stringr::str_replace(., "h|t|f1|f2|g1|g2|g3", "") %>% note_to_hex()
-        note2_hex <- seq[y+1] %>% stringr::str_replace(., "h|t|f1|f2|g1|g2|g3", "") %>% note_to_hex()
+        note1_hex <- seq[y-1][[1]][length(seq[y-1][[1]])] %>%
+          stringr::str_replace(., "h|t|f1|f2|g1|g2|g3", "") %>% note_to_hex()
+
+        note2_hex <- seq[y+1][[1]][length(seq[y+1][[1]])] %>%
+          stringr::str_replace(., "h|t|f1|f2|g1|g2|g3", "") %>% note_to_hex()
 
       }else if(grepl("g3", x)){
         event1_hex <- "80"
         velocity1_hex <- vel_helper(a, event1_hex)
-        note1_hex <- seq[y-1] %>% stringr::str_replace(., "h|t|f1|f2|g1|g2|g3", "") %>% note_to_hex()
+        note1_hex <- seq[y-1][[1]][length(seq[y-1][[1]])] %>%
+          stringr::str_replace(., "h|t|f1|f2|g1|g2|g3", "") %>% note_to_hex()
         rest_hex <- "04"
         note_length_hex <- (note_length_hex %>% as.hexmode() %>% as.numeric - 4) %>% as.hexmode() %>% as.character()
       }
 
       if(is.na(z)){
 
-      return(c(rest_hex, event1_hex, note1_hex, velocity1_hex,
-               note_length_hex, event2_hex, note2_hex, velocity2_hex))
+        return(c(rest_hex, event1_hex, note1_hex, velocity1_hex,
+                 note_length_hex, event2_hex, note2_hex, velocity2_hex))
       }else{
 
-        return(c("00", "B0", stringr::str_extract(z, ".{2}$"), stringr::str_extract(z, "(?<=-).{1,}(?=-)"),
-                 rest_hex, event1_hex, note1_hex, velocity1_hex,
+        return(c(rest_hex, "B0", stringr::str_extract(z, ".{2}$"), stringr::str_extract(z, "(?<=-).{1,}(?=-)"),
+                 "00", event1_hex, note1_hex, velocity1_hex,
                  note_length_hex, event2_hex, note2_hex, velocity2_hex))
       }
 
-      }) %>% unlist
+    }) %>% unlist
 
-    })
+  })
 
 
 
@@ -100,7 +106,7 @@ create_midi2 <- function(seq_arg, note_length){
 
   tracks_fin <- purrr::map(hex_tracks, function(track){
 
-  c(c("4D", "54", "72", "6B"), as.character(special_hexmode(length(track))), track)
+    c(c("4D", "54", "72", "6B"), as.character(special_hexmode(length(track))), track)
 
   })
 
@@ -114,60 +120,59 @@ create_midi2 <- function(seq_arg, note_length){
 # Creates a list of pairs of note events
 seq_modify <- function(seq){
 
-  seq <- doubles_rolls_adj(seq) %>% flam_adj() %>% glide_adj()
+  seq <- doubles_rolls_adj(seq) %>% flam_adj() #%>% glide_adj()
 
-purrr::map2(which(seq != "rest"), seq_along(which(seq != "rest")), function(x, y){
+  purrr::map2(which(seq != "rest"), seq_along(which(seq != "rest")), function(x, y){
 
-  idx <- which(seq != "rest")[y-1]
+    idx <- which(seq != "rest")[y-1]
 
-  if(!purrr::is_empty(seq[idx])){
+    if(!purrr::is_empty(seq[idx])){
 
-    if(idx != (x-1)){
-      idx2 <- (idx+1):(x-1)
-    }else{idx2 <- 0}
+      if(idx != (x-1)){
+        idx2 <- (idx+1):(x-1)
+      }else{idx2 <- 0}
 
-  }else{
-    if(x == 1){
-      idx2 <- 0
     }else{
-      idx2 <- 1:(x-1)
+      if(x == 1){
+        idx2 <- 0
+      }else{
+        idx2 <- 1:(x-1)
+      }
     }
-    }
 
-  return(c(seq[idx2], seq[x]))
+    return(c(seq[idx2], seq[x]))
 
+  }
+  )
 }
-)
-}
-
 
 # Adjust for glides
 glide_adj <- function(seq){
 
-stuff <- grepl("g", seq)
-stuff[which(stuff == TRUE) + 1] <- TRUE
-stuff_lst <- split(seq, f = cumsum(c(1, diff(stuff) != 0))) %>% unname
+  stuff <- grepl("g", seq)
+  stuff[which(stuff == TRUE) + 1] <- TRUE
+  stuff_lst <- split(seq, f = cumsum(c(1, diff(stuff) != 0))) %>% unname
 
-purrr::map(stuff_lst, function(x){
+  purrr::map(stuff_lst, function(x){
 
-  if(any(grepl("g", x))){
+    if(any(grepl("g", x))){
 
-    rests_vec <- x[x == "rest"]
-    notes_vec <- x[x != "rest"]
+      rests_vec <- x[x == "rest"]
+      notes_vec <- x[x != "rest"]
 
-    notes_vec[1] <- paste0(notes_vec[1], "1")
-    notes_vec[length(notes_vec)] <- paste0(notes_vec[length(notes_vec)], "g3")
+      notes_vec[1] <- paste0(notes_vec[1], "1")
+      notes_vec[length(notes_vec)] <- paste0(notes_vec[length(notes_vec)], "g3")
 
-    if(length(notes_vec) > 2){
-      notes_vec[2:(length(notes_vec)-1)] <- paste0(notes_vec[2:(length(notes_vec)-1)], "2")
+      if(length(notes_vec) > 2){
+        notes_vec[2:(length(notes_vec)-1)] <- paste0(notes_vec[2:(length(notes_vec)-1)], "2")
+      }
+
+      return(c(rests_vec, notes_vec))
+
+    }else{
+      return(x)
     }
-
-    return(c(rests_vec, notes_vec))
-
-  }else{
-    return(x)
-  }
-}) %>% unlist
+  }) %>% unlist
 
 }
 
@@ -211,14 +216,14 @@ flam_adj <- function(seq){
 # Turn rests into hex
 first_rests <- function(x, note_length){
 
-    rest_stuff <- x[x == "rest"]
+  rest_stuff <- x[x == "rest"]
 
-    if(!purrr::is_empty(rest_stuff)){
-      return(rep(note_length, length(rest_stuff)) %>% as.hexmode() %>% as.numeric() %>%
-               cumsum() %>% as.hexmode_mod() %>% .[[length(.)]] %>% strsplit(., " "))
-    }else{
-      return("00")
-    }
+  if(!purrr::is_empty(rest_stuff)){
+    return(rep(note_length, length(rest_stuff)) %>% as.hexmode() %>% as.numeric() %>%
+             cumsum() %>% as.hexmode_mod() %>% .[[length(.)]] %>% strsplit(., " "))
+  }else{
+    return("00")
+  }
 
 }
 
@@ -264,6 +269,17 @@ give_header_and_tempo <- function(track_info){
   return(c(hex_header, tempo_track, track_info %>% unlist))
 }
 
-#####
+# Convert note to hex
+note_to_hex <- function(note){
+  # Apply function to character string of notes
+  lapply(note, function(x){
+
+    # Split string into character vector of notes
+    x <- stringr::str_split(x, " ") %>% unlist %>% stringr::str_split(., "-") %>% unlist
+    # Return appropriate hex for note followed by 'rest'
+    c(as.character(as.hexmode(0:119)), "rest")[which(c(paste0(c("C", "C#", "D", "D#", "E", "F",
+                                                                "F#", "G", "G#", "A", "Bb", "B"),
+                                                              rep(seq(-1,8), each = 12)), "rest") %in% x)]}) %>% unname()
+}
 
 

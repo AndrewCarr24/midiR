@@ -40,7 +40,7 @@ template_and_builder_aux <- function(seq = seq, position = position, prob = prob
     if(position[length(position)] != "template" | (mapper[length(mapper)] != "cc" & mapper[length(mapper)] != "v")){
       stop("The position and cc_map arguments of random_modify should be given the appropriate functions, template and cc_mapper.")
     }else{
-    other_mappings <- rep(mapper[1:(length(mapper)-1)], length(seq)/bar)
+      other_mappings <- rep(mapper[1:(length(mapper)-1)], length(seq)/bar)
     }
   }
 
@@ -100,9 +100,13 @@ attr_chunk <- function(seq, seq_orig, attr_seq){
 
   attr_seq <- purrr::map2(seq_orig, attr_seq, function(x, y){
 
-    if(grepl("d", x)){
+    if(grepl("d|f", x)){
 
-      return(c(y, NA))
+      return(c(y, y))
+
+    }else if(grepl("l", x)){
+
+      return(c(y, y, y))
 
     }else{
 
@@ -111,9 +115,8 @@ attr_chunk <- function(seq, seq_orig, attr_seq){
     }
 
 
-    }) %>% unlist
+  }) %>% unlist
 
   return(attr_seq[cumsum(purrr::map(seq, ~length(.x)) %>% unlist)])
 
 }
-

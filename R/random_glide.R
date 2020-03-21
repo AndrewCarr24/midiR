@@ -6,11 +6,6 @@ random_glide <-  function(seq_arg = NULL, prob = 1, position = "all", track_appl
     return(obj)
   }
 
-  # Handling non-list seq arguments
-  if(!is.list(seq_arg)){
-    seq_arg <- list(seq_arg)
-  }
-
   # Selecting tracks(s) to apply mutes to
   track_arg = rep(TRUE, length(seq_arg))
   if(!is.null(track_apply)){
@@ -39,13 +34,27 @@ random_glide <-  function(seq_arg = NULL, prob = 1, position = "all", track_appl
         }else{seq[x]}
       }) %>% unlist
 
+      seq_ind <- rep(2, length(seq[grepl("g", seq)]))
+      seq_ind[1] <- 1
+
+      seq[grepl("g", seq)] <- purrr::map2(seq[grepl("g", seq)], seq_ind, function(x, y){
+
+        stringr::str_replace(x, "g$", paste0("g", y))
+
+      }) %>% unlist
+
+      glide_end_ind <- (grep("g2$", seq) + 1)[!(grep("g2$", seq) + 1) %in% grep("g2$", seq)]
+      glide_end_ind <- (grep("g1$", seq) + 1)[!(grep("g1$", seq) + 1) %in% grep("g2$", seq)]
+
+      seq[glide_end_ind] <- paste0(seq[glide_end_ind], "g3")
+
+
       return(seq)
     }
   })
 
- # if(length(lst) == 1){
- #  return(lst[[1]])}else{
-      return(lst)
-  #  }
+
+  return(lst)
+
 
 }
