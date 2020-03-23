@@ -26,7 +26,7 @@ random_cc <- function(seq_arg = NULL, cc_parm = NULL, cc_map = NULL, position = 
       cc_seq <- rep(NA, length(seq))
 
       cc_seq[pos_mappings] <- purrr::map(prob_mappings, function(y){
-        paste0("CC-", y %>% as.hexmode() %>% as.character(), "-", cc_parm)})
+        paste0(y %>% as.hexmode() %>% as.character(), "-", stringr::str_pad(as.character(cc_parm), 2, pad = "0"))})
 
       cc_seq <- cc_seq %>% unlist
 

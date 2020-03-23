@@ -90,9 +90,12 @@ create_midi2 <- function(seq_arg, note_length){
                  note_length_hex, event2_hex, note2_hex, velocity2_hex))
       }else{
 
-        return(c(rest_hex, "B0", stringr::str_extract(z, ".{2}$"), stringr::str_extract(z, "(?<=-).{1,}(?=-)"),
+        #next_rests_hex <- first_rests(seq[y+1], note_length = note_length)
+
+        return(c(rest_hex, "B0", stringr::str_extract(z, ".{2}$"), stringr::str_extract(z, ".{1,}(?=-)"),
                  "00", event1_hex, note1_hex, velocity1_hex,
-                 note_length_hex, event2_hex, note2_hex, velocity2_hex))
+                 note_length_hex, event2_hex, note2_hex, velocity2_hex,
+                 "00", "B0", stringr::str_extract(z, ".{2}$"), stringr::str_extract(z, ".{1,}(?=-)")))
       }
 
     }) %>% unlist

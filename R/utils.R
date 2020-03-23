@@ -12,20 +12,6 @@ builder <- function(..., path = "linear"){
 
 }
 
-## CC Function
-cc_mapper <- function(...){
-
-  return(list(..., "cc"))
-
-}
-
-## CC Function
-v_mapper <- function(...){
-
-  return(list(..., "v"))
-
-}
-
 
 # Turns template and builder lists into position and probability mappings (for use in randomizer functions)
 template_and_builder_aux <- function(seq = seq, position = position, prob = prob, mapper = NULL){
@@ -37,10 +23,10 @@ template_and_builder_aux <- function(seq = seq, position = position, prob = prob
   prob_nums =  purrr::map(seq(1, length(probs), 2), ~probs[c(.x, .x+1)])}
 
   if(!is.null(mapper)){
-    if(position[length(position)] != "template" | (mapper[length(mapper)] != "cc" & mapper[length(mapper)] != "v")){
-      stop("The position and cc_map arguments of random_modify should be given the appropriate functions, template and cc_mapper.")
+    if(position[length(position)] != "template"){
+      stop("The position argument should be given the appropriate function, template.")
     }else{
-      other_mappings <- rep(mapper[1:(length(mapper)-1)], length(seq)/bar)
+      other_mappings <- rep(mapper, length(seq)/bar)
     }
   }
 
